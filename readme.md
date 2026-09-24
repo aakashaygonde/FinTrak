@@ -84,15 +84,25 @@ FinTrack is a full-stack personal finance web application designed to help indiv
 
 ## Screenshots
 
-<!-- Add application screenshots here -->
+<p align="center">
+  <img src="./snapshots/dashboard.png" width="850" alt="FinTrack Financial Dashboard" />
+</p>
 
-| Dashboard Overview | Transaction Ledger |
+| Dashboard Activity & Cashflow | Transaction Ledger & Filtered Export |
 | :---: | :---: |
-| *(Screenshot Placeholder)* | *(Screenshot Placeholder)* |
+| <img src="./snapshots/dashboard(2).png" width="420" alt="Dashboard Activity" /> | <img src="./snapshots/Transactions.png" width="420" alt="Transaction Ledger" /> |
 
-| Category Budgets | Financial Analytics |
+| Smart Monthly Spending Caps | Financial Analytics & Health Score |
 | :---: | :---: |
-| *(Screenshot Placeholder)* | *(Screenshot Placeholder)* |
+| <img src="./snapshots/budget.png" width="420" alt="Smart Budgets" /> | <img src="./snapshots/analytics.png" width="420" alt="Financial Analytics" /> |
+
+| Multi-Segment Analytics Breakdown | Categorized Expense Overview |
+| :---: | :---: |
+| <img src="./snapshots/analytics(2).png" width="420" alt="Analytics Breakdown" /> | <img src="./snapshots/Expense.png" width="420" alt="Expense Overview" /> |
+
+| Expense Logging Modal Flow | Revenue Streams Management |
+| :---: | :---: |
+| <img src="./snapshots/expense(form).png" width="420" alt="Add Expense Modal" /> | <img src="./snapshots/income.png" width="420" alt="Income Streams" /> |
 
 ---
 
@@ -148,6 +158,7 @@ FinTrack/
 │   ├── .env.example              # Frontend environment template
 │   ├── package.json              # Frontend dependencies and scripts
 │   └── vite.config.js            # Vite configuration
+├── snapshots/                    # Application UI screenshots
 ├── .gitignore                    # Root git ignore rules
 ├── package-lock.json             # Root lockfile
 ├── readme.md                     # Project documentation
