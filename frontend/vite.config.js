@@ -8,6 +8,6 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: process.env.PORT || 4173,
-    allowedHosts: ['exp-track-xzk0.onrender.com']  // ✅ Add this line
+    allowedHosts: true
   }
 })

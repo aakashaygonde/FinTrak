@@ -1,170 +1,103 @@
-# 💰 Expense Tracker App
+# 💎 FinTrack — Personal Finance & Expense Management Platform
 
 ![MERN Stack](https://img.shields.io/badge/Stack-MERN-blue)
+![Vite](https://img.shields.io/badge/Frontend-Vite%20%2B%20React%2019-646CFF)
+![TailwindCSS](https://img.shields.io/badge/Styling-TailwindCSS%20v4-38B2AC)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A comprehensive, fully responsive financial management application built using the MERN stack (MongoDB, Express, React, Node.js). Track your income and expenses with secure authentication, interactive visualizations, and data export capabilities.
+A modern, high-performance personal finance platform built for professionals and individuals seeking complete control over their income, expenses, category budgets, and long-term financial clarity.
 
-## website link: [https://exp-track-frontend.onrender.com/](https://exp-track-frontend12.vercel.app)
+---
 
-## 📸 App Screenshots
+## 🌟 Key Features
 
-<div align="center">
+### 1. Unified Financial Dashboard
+- **Real-Time Cashflow Telemetry:** Immediate metrics for Total Balance, Inflow (Income), and Outflow (Expenses).
+- **Interactive Visualizations:**
+  - Cashflow balance breakdown (Finance Overview).
+  - Income trend analytics by revenue stream.
+  - 30-day expense velocity charts.
+- **Recent Transactions Feed:** High-density activity logs with instant status badges.
 
+### 2. Transaction Management
+- Categorized expense logging with custom emoji icons.
+- Multi-source income logging (salary, investments, freelancing, dividends).
+- Full search, filter, and sorting across all transactions.
+- In-memory buffered Excel report exports for both expenses and income.
 
- <div style="display: flex; justify-content: space-between;">
-    <div>
-      <img src="https://github.com/user-attachments/assets/04b8f613-0c06-40d7-b49c-a2c990fa3262" width="380px" />
-      <p><i>Dashboard interface</i></p>
-    </div>
-  </div>
-  
-  <br />
+### 3. Smart Monthly Budgets
+- Dynamic category-level spending caps (Housing, Food, Transportation, Utilities, Entertainment, Health).
+- Automatic real-time deficit and percentage threshold alerts (Safe, Warning, Over Budget).
+- Remaining monthly allowance calculations.
 
-  <div style="display: flex; justify-content: space-between;">
-    <div>
-      <img src="https://github.com/user-attachments/assets/381a3f9e-7063-4ccd-a9ef-27db7fad491f" width="380px" />
-      <p><i>Income management interface</i></p>
-    </div>
-    <br />
-    <div>
-      <img src="https://github.com/user-attachments/assets/5a950ad0-cfff-4ea2-a61a-81d9c7d91bac" width="380px" />
-      <p><i>Expense tracking with categories</i></p>
-    </div>
-  </div>
-  
-  <br />
-  
-  <div style="display: flex; justify-content: space-between;">
-    <div>
-      <img src="https://github.com/user-attachments/assets/6506d106-0642-4dd5-85b0-022b3518bc6b" alt="Mobile View" width="380px" />
-      <p><i>Responsive mobile interface</i></p>
-    </div>
-  </div>
-</div>
+### 4. Advanced Analytics & Health Score
+- **Savings Rate KPI:** Calculation of percentage of income saved against standard financial benchmarks.
+- **Algorithmic Financial Health Diagnosis:** Automated score evaluating savings efficiency and expense management.
+- Multi-dimensional category breakdown charts.
 
+### 5. Enterprise-Grade Security
+- Secure JWT-based stateless authentication with password hashing via bcrypt.
+- Enforced User ID scoping preventing Insecure Direct Object References (IDOR).
+- Automatic input validation and email format checks.
 
+---
 
-## ✨ Features
+## 🛠️ Technology Stack
 
-### Core Functionality
-- **Secure Authentication** - JWT-based login and registration system
-- **Financial Dashboard** - At-a-glance view of your total balance, income, and expenses
-- **Transaction Management** - Add, view, and delete both income and expense records
-- **Data Export** - Download your financial data in Excel format
+- **Frontend:** React 19, Vite v6, Tailwind CSS v4, Recharts, Lucide Icons, React Router v7.
+- **Backend:** Node.js, Express.js, MongoDB Atlas (Mongoose), JWT, Multer, ExcelJS.
+- **Typography:** Plus Jakarta Sans (Google Fonts).
 
-### User Experience
-- **Interactive Visualizations** - Analyze your finances with Bar, Pie, and Line charts
-- **Recent Transactions** - Quick access to your latest financial activities
-- **Responsive Design** - Seamless experience across desktop, tablet, and mobile devices
-- **Intuitive Interface** - User-friendly sidebar navigation and hover-to-delete functionality
+---
 
-## 🛠️ Tech Stack
-
-### Frontend
-- React
-- HTML/CSS
-- JavaScript
-- Chart visualization library (Chart.js/Recharts)
-
-### Backend
-- Node.js
-- Express
-- MongoDB
-- JSON Web Tokens (JWT)
-
-### Utilities
-- Excel export library
-- Responsive design framework
-
-## 📋 Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v12+)
-- npm or yarn
-- MongoDB (local or Atlas connection)
+- Node.js (v18+)
+- MongoDB Atlas or local MongoDB instance
 
 ### Installation
 
-1. **Clone the repository**
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/expense-tracker-app.git
-   cd expense-tracker-app
+   git clone https://github.com/aakashaygonde/FinTrak.git
+   cd FinTrak
    ```
 
-2. **Set up the backend**
-   ```bash
-   cd backend
-   npm install
-   npm start
-   ```
+2. **Configure Environment Variables:**
+   - **Backend:** Copy `backend/.env.example` to `backend/.env`:
+     ```env
+     PORT=8000
+     MONGO_URI=your_mongodb_connection_string
+     JWT_SECRET=your_jwt_secret_key
+     CLIENT_URL=http://localhost:5173
+     ```
+   - **Frontend:** Copy `frontend/.env.example` to `frontend/.env`:
+     ```env
+     VITE_BASE_URL=http://localhost:8000
+     ```
 
-3. **Set up the frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
+3. **Install Dependencies & Start Servers:**
+   - **Backend:**
+     ```bash
+     cd backend
+     npm install
+     npm start
+     ```
+   - **Frontend:**
+     ```bash
+     cd frontend
+     npm install
+     npm run dev
+     ```
 
-4. **Configure environment variables**
-   
-   Create `.env` files in both the backend and frontend directories:
+4. **Access the Application:**
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-   Backend `.env` example:
-   ```
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   ```
-
-## 🚀 Usage Guide
-
-1. **Create an account** or log in with existing credentials
-2. **Explore your dashboard** to view financial summaries
-3. **Manage transactions** by adding new income/expenses or removing existing ones
-4. **Analyze patterns** using the interactive charts
-5. **Export data** as Excel files for external record-keeping
-6. **Navigate easily** using the responsive sidebar menu
-
-## 📁 Project Structure
-
-```
-expense-tracker-app/
-├── backend/
-│   ├── controllers/    # Request handlers
-│   ├── models/         # Database schemas
-│   ├── routes/         # API endpoints
-│   ├── middleware/     # Auth & validation
-│   ├── .env            # Environment variables
-│   ├── server.js       # Entry point
-│   └── package.json    # Backend dependencies
-└── frontend/
-    ├── public/         # Static assets
-    ├── src/
-    │   ├── components/ # Reusable UI elements
-    │   ├── pages/      # Screen components
-    │   ├── App.js      # Root component
-    │   └── index.js    # Entry point
-    ├── .env            # Frontend variables
-    └── package.json    # Frontend dependencies
-```
-
-## 👥 Contributing
-
-Contributions are welcome and appreciated! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please follow existing code styles and include documentation for new features.
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
 
-
-
-<p align="center">Made with ❤️ by [Arijeet Das]</p>
+<p align="center">Crafted with precision by <b>Aakash Haygonde</b></p>

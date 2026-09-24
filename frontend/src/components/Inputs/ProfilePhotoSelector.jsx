@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { LuUser, LuUpload, LuTrash } from "react-icons/lu";
+import { LuUser, LuUpload, LuTrash2 } from "react-icons/lu";
 
 const ProfilePhotoSelector = ({ image, setImage }) => {
   const inputRef = useRef(null);
@@ -24,7 +24,7 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
   };
 
   return (
-    <div className="flex justify-center mb-6">
+    <div className="flex flex-col items-center justify-center mb-5">
       <input
         type="file"
         accept="image/*"
@@ -33,14 +33,18 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
         className="hidden"
       />
       {!image ? (
-        <div className="w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative">
-          <LuUser className="text-4xl text-primary" />
+        <div className="relative">
+          <div className="w-20 h-20 flex items-center justify-center bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-full text-indigo-600">
+            <LuUser size={34} />
+          </div>
           <button
             type="button"
-            className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full absolute -bottom-1 -right-1"
+            className="w-8 h-8 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-full absolute -bottom-1 -right-1 shadow-sm transition-colors cursor-pointer"
             onClick={onChooseFile}
+            title="Upload profile photo"
+            aria-label="Upload profile photo"
           >
-            <LuUpload />
+            <LuUpload size={14} />
           </button>
         </div>
       ) : (
@@ -48,17 +52,22 @@ const ProfilePhotoSelector = ({ image, setImage }) => {
           <img
             src={previewUrl}
             alt="profile photo"
-            className="w-20 h-20 rounded-full object-cover"
+            className="w-20 h-20 rounded-full object-cover border-2 border-indigo-200 shadow-xs"
           />
           <button
             type="button"
-            className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full absolute -bottom-1 -right-1"
+            className="w-8 h-8 flex items-center justify-center bg-rose-600 hover:bg-rose-700 text-white rounded-full absolute -bottom-1 -right-1 shadow-sm transition-colors cursor-pointer"
             onClick={handleRemoveImage}
+            title="Remove photo"
+            aria-label="Remove photo"
           >
-            <LuTrash />
+            <LuTrash2 size={14} />
           </button>
         </div>
       )}
+      <span className="text-[11px] text-slate-400 mt-2 font-medium">
+        Profile avatar (optional)
+      </span>
     </div>
   );
 };

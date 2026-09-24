@@ -1,60 +1,63 @@
-import React, { useState } from 'react'
-import Input from './../Inputs/Input';
-import EmojiPickerPop from '../EmojiPickerPop';
+import React, { useState } from "react";
+import Input from "../Inputs/Input";
+import EmojiPickerPop from "../EmojiPickerPop";
+import { Button } from "../ui";
 
-const AddIncomeForm = ({onAddIncome}) => {
+const AddIncomeForm = ({ onAddIncome }) => {
+  const [income, setIncome] = useState({
+    source: "",
+    amount: "",
+    date: new Date().toISOString().split("T")[0],
+    icon: "",
+  });
 
-    const [income, setIncome] = useState({
-        source:"",
-        amount: "",
-        date: "",
-        icon: "",
-    });
-
-    const handleChange =(key,value) => setIncome({...income,[key]:value});
+  const handleChange = (key, value) => setIncome({ ...income, [key]: value });
 
   return (
-    <div>
-
+    <div className="space-y-4">
+      <div className="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-xl border border-slate-200/80 mb-2">
+        <span className="text-xs text-slate-500 mb-2 font-medium">Select Source Icon</span>
         <EmojiPickerPop
-        icon = {income.icon}
-        onSelect={(selectdIcon) => handleChange('icon', selectdIcon) }
+          icon={income.icon}
+          onSelect={(selectedIcon) => handleChange("icon", selectedIcon)}
         />
+      </div>
 
-
-        <Input
+      <Input
         value={income.source}
-        onChange={({target}) => handleChange('source',target.value)}
+        onChange={({ target }) => handleChange("source", target.value)}
         label="Income Source"
-        placeholder ="Freelance , Salary , etc"
-        type = "text"
-        />
+        placeholder="e.g. Salary, Consulting, Investment, Dividend"
+        type="text"
+      />
 
-        <Input
+      <Input
         value={income.amount}
-        onChange={({target}) => handleChange('amount',target.value)}
-        label="Amount"
-        placeholder =""
-        type = "number"
-        />
-        <Input
-        value={income.date}
-        onChange={({target}) => handleChange('date',target.value)}
-        label="Date"
-        placeholder =""
-        type = "date"
-        />
-        <div className='flex justify-end mt-6'>
-            <button
-                type="button"
-                className="add-btn add-btn-fill"
-                onClick={() => onAddIncome(income)}
-            >
-                Add Income 
-            </button>
-        </div>
-    </div>
-  )
-}
+        onChange={({ target }) => handleChange("amount", target.value)}
+        label="Amount (₹)"
+        placeholder="e.g. 50000"
+        type="number"
+      />
 
-export default AddIncomeForm
+      <Input
+        value={income.date}
+        onChange={({ target }) => handleChange("date", target.value)}
+        label="Date"
+        type="date"
+      />
+
+      <div className="flex justify-end pt-3 border-t border-slate-100">
+        <Button
+          type="button"
+          variant="success"
+          size="md"
+          onClick={() => onAddIncome(income)}
+        >
+          Add Income
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default AddIncomeForm;

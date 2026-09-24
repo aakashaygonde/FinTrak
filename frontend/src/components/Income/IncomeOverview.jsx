@@ -1,37 +1,46 @@
-import React, { useEffect } from 'react'
-import { LuPlus } from 'react-icons/lu';
-import CustomBarChart from '../Charts/CustomBarChart';
-import { useState } from 'react';
-import {  prepareIncomeBarChartData } from '../../utils/helper';
+import React, { useEffect, useState } from "react";
+import { LuPlus } from "react-icons/lu";
+import CustomBarChart from "../Charts/CustomBarChart";
+import { prepareIncomeBarChartData } from "../../utils/helper";
+import { Button } from "../ui";
 
-const IncomeOverview = ({transactions, onAddIncome}) => {
+const IncomeOverview = ({ transactions, onAddIncome }) => {
+  const [chartData, setChartData] = useState([]);
 
-    const [chartData, setChartData] = useState([])
+  useEffect(() => {
+    const result = prepareIncomeBarChartData(transactions);
+    setChartData(result);
+    return () => {};
+  }, [transactions]);
 
-    useEffect(() => {
-        const result = prepareIncomeBarChartData(transactions);
-        setChartData(result);
-
-        return() => {};
-    }, [transactions]);
-  return <div className='card'>
-    <div className='flex items-center justify-between'>
-        <div className=''>
-            <h5 className='text-lg'>Income Overview</h5>
-            <p className='text-xs text-gray-400 mt-0.5'>
-                Trace Your Earnings over time and analyze your income trend .
-            </p>
+  return (
+    <div className="card">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
+            Income Overview
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Track your earnings over time and analyze your revenue streams.
+          </p>
         </div>
 
-        <button className='add-btn' onClick={onAddIncome}>
-            <LuPlus className='text-lg'/>
-            Add Income
-        </button>
-    </div>
-    <div className='mt-10'>
-        <CustomBarChart data={chartData}/>
-    </div>
-  </div>
-}
+        <Button
+          variant="success"
+          size="sm"
+          icon={LuPlus}
+          onClick={onAddIncome}
+          className="self-start sm:self-auto shrink-0"
+        >
+          Add Income
+        </Button>
+      </div>
 
-export default IncomeOverview
+      <div className="mt-8">
+        <CustomBarChart data={chartData} />
+      </div>
+    </div>
+  );
+};
+
+export default IncomeOverview;

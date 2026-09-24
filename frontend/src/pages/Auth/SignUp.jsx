@@ -1,13 +1,14 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import AuthLayout from "../../components/layouts/AuthLayout";
-import Input from "../../components/Inputs/Input";
+import { Button, Input } from "../../components/ui";
 import ProfilePhotoSelector from "../../components/Inputs/ProfilePhotoSelector";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/UserContext";
 import { validateEmail } from "../../utils/helper";
-import uploadImage from "../../utils/uploadImage"; // ✅ Added missing import
+import uploadImage from "../../utils/uploadImage";
+import { LuUser, LuMail, LuLock, LuArrowRight } from "react-icons/lu";
 
 const SignUp = () => {
   const [profilePic, setProfilePic] = useState(null);
@@ -15,6 +16,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
@@ -22,10 +24,7 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    let profileImageUrl = "";
-
-    // Validate input fields
-    if (!fullName) {
+    if (!fullName.trim()) {
       setError("Please enter your full name");
       return;
     }
@@ -33,21 +32,22 @@ const SignUp = () => {
       setError("Please enter a valid email address");
       return;
     }
-    if (!password) {
-      setError("Please enter a password");
+    if (!password || password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
     setError(null);
+    setLoading(true);
 
     try {
-      // Upload image if present
+      let profileImageUrl = "";
+
       if (profilePic) {
         const imgUploadRes = await uploadImage(profilePic);
         profileImageUrl = imgUploadRes.imageUrl || "";
       }
 
-      // SignUp API call
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
         fullName,
         email,
@@ -57,68 +57,96 @@ const SignUp = () => {
 
       const { token, user } = response.data;
       if (token) {
-        localStorage.setItem("token", token); // ✅ Fixed `toke` typo
+        localStorage.setItem("token", token);
         updateUser(user);
         navigate("/dashboard");
       }
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        setError(err.response.data.message);
       } else {
-        setError("An error occurred. Please try again.");
+        setError("An error occurred during account creation. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <AuthLayout>
-      <div className="lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">
-        <h3 className="text-xl font-semibold">Create an Account</h3>
-        <p className="text-xs text-slate-700 mt-[5px] mb-6">
-          Join us today to start tracking your income and expenses.
-        </p>
+      <div className="w-full">
+        {/* Heading */}
+        <div className="mb-5">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            Create your FinTrack account
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
+            Join thousands tracking their wealth and managing expenses effortlessly.
+          </p>
+        </div>
 
-        <form onSubmit={handleSignUp}>
-          <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              value={fullName}
-              onChange={({ target }) => setFullName(target.value)}
-              label="Full Name"
-              placeholder="John Doe"
-              type="text"
-            />
-            <Input
-              value={email}
-              onChange={({ target }) => setEmail(target.value)}
-              label="Email Address"
-              placeholder="john@example.com"
-              type="email"
-              autoComplete="email"
-            />
-            <div className="col-span-2">
-              <Input
-                value={password}
-                onChange={({ target }) => setPassword(target.value)}
-                label="Password"
-                placeholder="Min 8 characters"
-                type="password"
-                autoComplete="current-password"
-              />
-            </div>
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <div className="flex justify-center pb-1">
+            <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
           </div>
 
-          {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
+          <Input
+            value={fullName}
+            onChange={({ target }) => setFullName(target.value)}
+            label="Full Name"
+            placeholder="John Doe"
+            type="text"
+            icon={LuUser}
+            required
+          />
 
-          <button type="submit" className="btn-primary">
-            SIGN UP
-          </button>
+          <Input
+            value={email}
+            onChange={({ target }) => setEmail(target.value)}
+            label="Email Address"
+            placeholder="you@example.com"
+            type="email"
+            autoComplete="email"
+            icon={LuMail}
+            required
+          />
 
-          <p className="text-[13px] text-slate-800 mt-3">
+          <Input
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+            label="Password"
+            placeholder="Minimum 8 characters"
+            type="password"
+            autoComplete="new-password"
+            icon={LuLock}
+            required
+          />
+
+          {error && (
+            <div className="p-3 rounded-lg bg-rose-50 border border-rose-200/80 text-xs text-rose-700 font-medium">
+              {error}
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            isLoading={loading}
+            className="w-full mt-2"
+            icon={LuArrowRight}
+            iconPosition="right"
+          >
+            Get Started with FinTrack
+          </Button>
+
+          <p className="text-xs text-center text-slate-600 pt-2">
             Already have an account?{" "}
-            <Link className="font-medium text-primary underline" to="/login">
-              Login
+            <Link
+              to="/login"
+              className="font-semibold text-indigo-600 hover:text-indigo-700 underline underline-offset-2"
+            >
+              Sign In
             </Link>
           </p>
         </form>
