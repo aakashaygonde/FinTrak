@@ -3,8 +3,9 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import { Button, LoadingState, Badge } from "../../components/ui";
+import { Button, LoadingState, Badge, ExportMenu } from "../../components/ui";
 import { addThousandsSeparator } from "../../utils/helper";
+import { exportToCSV, exportToExcel } from "../../utils/exportHelper";
 import {
   LuPiggyBank,
   LuTrendingUp,
@@ -76,7 +77,6 @@ const Budgets = () => {
     let totalSpent = 0;
 
     const items = budgets.map((b) => {
-      // Find matching spent amount (case-insensitive fuzzy match)
       let spent = 0;
       Object.keys(categorySpending).forEach((cat) => {
         if (
@@ -110,6 +110,30 @@ const Budgets = () => {
     };
   }, [budgets, categorySpending]);
 
+  const handleExportCSV = () => {
+    const data = budgetStats.items.map((b) => ({
+      Category: b.category,
+      "Budget Limit (INR)": b.limit,
+      "Spent (INR)": b.spent,
+      "Remaining (INR)": b.remaining,
+      "Usage (%)": `${b.percentage}%`,
+      Status: b.percentage > 100 ? "Over Budget" : b.percentage >= 75 ? "Warning" : "Safe",
+    }));
+    exportToCSV(data, "fintrack_budgets.csv");
+  };
+
+  const handleExportExcel = () => {
+    const data = budgetStats.items.map((b) => ({
+      Category: b.category,
+      "Budget Limit (INR)": b.limit,
+      "Spent (INR)": b.spent,
+      "Remaining (INR)": b.remaining,
+      "Usage (%)": `${b.percentage}%`,
+      Status: b.percentage > 100 ? "Over Budget" : b.percentage >= 75 ? "Warning" : "Safe",
+    }));
+    exportToExcel(data, "fintrack_budgets.xls", "FinTrack Monthly Budgets");
+  };
+
   return (
     <DashboardLayout activeMenu="Budgets">
       <div className="space-y-6">
@@ -128,7 +152,14 @@ const Budgets = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            <ExportMenu
+              label="Export Budgets"
+              variant="secondary"
+              onExportExcel={handleExportExcel}
+              onExportCSV={handleExportCSV}
+            />
+
             <Button
               variant="primary"
               size="md"

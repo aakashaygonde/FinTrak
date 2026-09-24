@@ -3,7 +3,7 @@ import Input from "../Inputs/Input";
 import EmojiPickerPopup from "../EmojiPickerPop";
 import { Button } from "../ui";
 
-const AddExpenseForm = ({ onAddExpense }) => {
+const AddExpenseForm = ({ onAddExpense, isSubmitting = false }) => {
   const [expense, setExpense] = useState({
     category: "",
     amount: "",
@@ -51,9 +51,11 @@ const AddExpenseForm = ({ onAddExpense }) => {
           type="button"
           variant="primary"
           size="md"
+          isLoading={isSubmitting}
+          disabled={isSubmitting}
           onClick={() => onAddExpense(expense)}
         >
-          Add Expense
+          {isSubmitting ? "Adding..." : "Add Expense"}
         </Button>
       </div>
     </div>

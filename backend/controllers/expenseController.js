@@ -54,9 +54,11 @@ exports.deleteExpense = async (req, res) => {
     }
 };
 
-// Download Expense Excel (In-memory stream)
+// Download Expense Excel or CSV (In-memory stream)
 exports.downloadExpenseExcel = async (req, res) => {
     const userId = req.user.id;
+    const isCsv = req.query.format === 'csv';
+
     try {
         const expense = await Expense.find({ userId }).sort({ date: -1 });
         const data = expense.map((item) => ({
@@ -68,10 +70,15 @@ exports.downloadExpenseExcel = async (req, res) => {
         const wb = xlsx.utils.book_new();
         const ws = xlsx.utils.json_to_sheet(data);
         xlsx.utils.book_append_sheet(wb, ws, 'Expense');
-        const buffer = xlsx.write(wb, { type: 'buffer', bookType: 'xlsx' });
+        const buffer = xlsx.write(wb, { type: 'buffer', bookType: isCsv ? 'csv' : 'xlsx' });
 
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename=expense_details.xlsx');
+        const contentType = isCsv
+            ? 'text/csv; charset=utf-8'
+            : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const filename = isCsv ? 'expense_details.csv' : 'expense_details.xlsx';
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
         return res.send(buffer);
     } catch (err) {
         res.status(500).json({ message: "Server Error", error: err.message });

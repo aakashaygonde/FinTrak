@@ -1,16 +1,21 @@
 import React from "react";
-import { LuDownload } from "react-icons/lu";
 import TransactionInfoCard from "../Cards/TransactionInfoCard";
 import moment from "moment";
 import EmptyState from "../Cards/EmptyState";
-import { Button } from "../ui";
+import { ExportMenu } from "../ui";
 
-const ExpenseList = ({ transactions = [], onDelete, onDownload }) => {
+const ExpenseList = ({
+  transactions = [],
+  onDelete,
+  onDownloadExcel,
+  onDownloadCSV,
+  isExporting = false,
+}) => {
   const hasTransactions = transactions && transactions.length > 0;
 
   return (
     <div className="card">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div>
           <h4 className="text-base font-semibold text-slate-900 tracking-tight">
             All Expenses {hasTransactions ? `(${transactions.length})` : ""}
@@ -21,14 +26,12 @@ const ExpenseList = ({ transactions = [], onDelete, onDownload }) => {
         </div>
 
         {hasTransactions && (
-          <Button
-            variant="outline"
-            size="sm"
-            icon={LuDownload}
-            onClick={onDownload}
-          >
-            Export Excel
-          </Button>
+          <ExportMenu
+            label={isExporting ? "Exporting..." : "Export"}
+            disabled={isExporting}
+            onExportExcel={onDownloadExcel}
+            onExportCSV={onDownloadCSV}
+          />
         )}
       </div>
 

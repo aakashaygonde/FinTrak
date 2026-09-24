@@ -4,8 +4,9 @@ import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
-import { Button, Input, Select, LoadingState, EmptyState } from "../../components/ui";
+import { Button, Input, Select, LoadingState, EmptyState, ExportMenu } from "../../components/ui";
 import { addThousandsSeparator } from "../../utils/helper";
+import { exportToCSV, exportToExcel } from "../../utils/exportHelper";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import {
@@ -13,8 +14,8 @@ import {
   LuPlus,
   LuArrowDownLeft,
   LuArrowUpRight,
-  LuDownload,
   LuFilter,
+  LuX,
 } from "react-icons/lu";
 import toast from "react-hot-toast";
 
@@ -41,7 +42,7 @@ const Transactions = () => {
       setIncomes(incRes.data || []);
     } catch (err) {
       console.error("Error fetching transactions", err);
-      toast.error("Could not load transactions");
+      toast.error("Could not load transactions. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -105,6 +106,43 @@ const Transactions = () => {
   const totalExpenseVal = expenses.reduce((acc, curr) => acc + (curr.amount || 0), 0);
   const totalIncomeVal = incomes.reduce((acc, curr) => acc + (curr.amount || 0), 0);
   const netCashflow = totalIncomeVal - totalExpenseVal;
+
+  const isFilterActive = searchQuery.trim() !== "" || activeTab !== "all";
+
+  // Export handlers
+  const handleExportCSV = () => {
+    if (!combinedTransactions.length) {
+      toast.error("No transactions to export");
+      return;
+    }
+    const exportData = combinedTransactions.map((tx) => ({
+      Type: tx.type === "expense" ? "Expense" : "Income",
+      "Category / Source": tx.title,
+      "Amount (INR)": tx.amount,
+      Date: tx.displayDate,
+    }));
+    const filename = isFilterActive
+      ? "fintrack_filtered_transactions.csv"
+      : "fintrack_all_transactions.csv";
+    exportToCSV(exportData, filename);
+  };
+
+  const handleExportExcel = () => {
+    if (!combinedTransactions.length) {
+      toast.error("No transactions to export");
+      return;
+    }
+    const exportData = combinedTransactions.map((tx) => ({
+      Type: tx.type === "expense" ? "Expense" : "Income",
+      "Category / Source": tx.title,
+      "Amount (INR)": tx.amount,
+      Date: tx.displayDate,
+    }));
+    const filename = isFilterActive
+      ? "fintrack_filtered_transactions.xls"
+      : "fintrack_all_transactions.xls";
+    exportToExcel(exportData, filename, "FinTrack Transactions");
+  };
 
   return (
     <DashboardLayout activeMenu="Transactions">
@@ -198,8 +236,15 @@ const Transactions = () => {
               </button>
             </div>
 
-            {/* Quick action buttons */}
-            <div className="flex items-center gap-2">
+            {/* Actions: Export & Add */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportMenu
+                label={isFilterActive ? "Export Filtered" : "Export Data"}
+                disabled={combinedTransactions.length === 0}
+                onExportExcel={handleExportExcel}
+                onExportCSV={handleExportCSV}
+              />
+
               <Button
                 variant="outline"
                 size="sm"
@@ -220,17 +265,29 @@ const Transactions = () => {
           </div>
 
           {/* Search bar & Sort */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
-            <div className="sm:col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 items-end">
+            <div className="sm:col-span-2 relative">
               <Input
+                label="Search Transactions"
                 placeholder="Search by category, source, or amount..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 icon={LuSearch}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-8 text-slate-400 hover:text-slate-600 p-1"
+                  aria-label="Clear search"
+                >
+                  <LuX size={15} />
+                </button>
+              )}
             </div>
             <div>
               <Select
+                label="Sort Order"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 options={[
@@ -247,22 +304,50 @@ const Transactions = () => {
         {/* Transactions List */}
         <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-5">
           <div className="flex items-center justify-between pb-4 mb-2 border-b border-slate-100">
-            <h4 className="text-sm font-semibold text-slate-900 tracking-tight">
-              Transaction History ({combinedTransactions.length})
-            </h4>
-            <span className="text-xs text-slate-400">
-              Showing filtered results
-            </span>
+            <div>
+              <h4 className="text-sm font-semibold text-slate-900 tracking-tight">
+                Transaction History ({combinedTransactions.length})
+              </h4>
+              {isFilterActive && (
+                <p className="text-xs text-indigo-600 font-medium mt-0.5">
+                  Showing filtered results (export will include these {combinedTransactions.length} records)
+                </p>
+              )}
+            </div>
+
+            {isFilterActive && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setActiveTab("all");
+                }}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline cursor-pointer"
+              >
+                Reset filters
+              </button>
+            )}
           </div>
 
           {loading ? (
             <LoadingState message="Fetching all transactions..." />
           ) : combinedTransactions.length === 0 ? (
             <EmptyState
-              title="No transactions found"
-              description="No transaction matching your current filter criteria was found."
-              actionText="Manage Expenses"
-              onAction={() => navigate("/expense")}
+              title={isFilterActive ? "No matching transactions" : "No transactions recorded yet"}
+              description={
+                isFilterActive
+                  ? "Try adjusting your search query or switching tabs to find records."
+                  : "Start logging your income and expenses to manage your cashflow."
+              }
+              actionText={isFilterActive ? "Clear Filters" : "Add Expense"}
+              onAction={
+                isFilterActive
+                  ? () => {
+                      setSearchQuery("");
+                      setActiveTab("all");
+                    }
+                  : () => navigate("/expense")
+              }
             />
           ) : (
             <div className="divide-y divide-slate-100">

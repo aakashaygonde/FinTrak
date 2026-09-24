@@ -2,7 +2,7 @@ import React from "react";
 import { LuTriangleAlert, LuTrash2 } from "react-icons/lu";
 import { Button } from "./ui";
 
-const DeleteAlert = ({ content, onDelete, onCancel }) => {
+const DeleteAlert = ({ content, onDelete, onCancel, isLoading = false }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-3.5">
@@ -21,7 +21,12 @@ const DeleteAlert = ({ content, onDelete, onCancel }) => {
 
       <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
         {onCancel && (
-          <Button variant="outline" size="sm" onClick={onCancel}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
         )}
@@ -30,8 +35,10 @@ const DeleteAlert = ({ content, onDelete, onCancel }) => {
           size="sm"
           icon={LuTrash2}
           onClick={onDelete}
+          isLoading={isLoading}
+          disabled={isLoading}
         >
-          Delete Record
+          {isLoading ? "Deleting..." : "Delete Record"}
         </Button>
       </div>
     </div>

@@ -3,11 +3,11 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import { LoadingState, Badge } from "../../components/ui";
+import { LoadingState, Badge, ExportMenu } from "../../components/ui";
 import { addThousandsSeparator } from "../../utils/helper";
+import { exportToCSV, exportToExcel } from "../../utils/exportHelper";
 import FinanceOverview from "../../components/Dashboard/FinanceOverview";
 import CustomPieChart from "../../components/Charts/CustomPieChart";
-import CustomBarChart from "../../components/Charts/CustomBarChart";
 import {
   LuChartLine,
   LuTrendingUp,
@@ -89,6 +89,42 @@ const Analytics = () => {
     }));
   }, [incomes]);
 
+  const handleExportCSV = () => {
+    const summary = [
+      { Metric: "Total Inflows (Income)", Value: totalIncome },
+      { Metric: "Total Outflows (Expense)", Value: totalExpense },
+      { Metric: "Net Cashflow Surplus/Deficit", Value: netSavings },
+      { Metric: "Savings Rate (%)", Value: `${savingsRate}%` },
+      ...categoryPieData.map((c) => ({
+        Metric: `Expense - ${c.name}`,
+        Value: c.amount,
+      })),
+      ...incomePieData.map((inc) => ({
+        Metric: `Income - ${inc.name}`,
+        Value: inc.amount,
+      })),
+    ];
+    exportToCSV(summary, "fintrack_analytics_report.csv");
+  };
+
+  const handleExportExcel = () => {
+    const summary = [
+      { Metric: "Total Inflows (Income)", "Value (INR)": totalIncome },
+      { Metric: "Total Outflows (Expense)", "Value (INR)": totalExpense },
+      { Metric: "Net Cashflow Surplus/Deficit", "Value (INR)": netSavings },
+      { Metric: "Savings Rate (%)", "Value (INR)": `${savingsRate}%` },
+      ...categoryPieData.map((c) => ({
+        Metric: `Expense - ${c.name}`,
+        "Value (INR)": c.amount,
+      })),
+      ...incomePieData.map((inc) => ({
+        Metric: `Income - ${inc.name}`,
+        "Value (INR)": inc.amount,
+      })),
+    ];
+    exportToExcel(summary, "fintrack_analytics_report.xls", "FinTrack Financial Analytics");
+  };
+
   return (
     <DashboardLayout activeMenu="Analytics">
       <div className="space-y-6">
@@ -102,9 +138,17 @@ const Analytics = () => {
               Comprehensive breakdown of cashflow trends, savings efficiency, and category allocation.
             </p>
           </div>
-          <Badge variant="default" size="md" withDot>
-            Live Financial Feed
-          </Badge>
+
+          <div className="flex items-center gap-2.5">
+            <ExportMenu
+              label="Export Analytics"
+              onExportExcel={handleExportExcel}
+              onExportCSV={handleExportCSV}
+            />
+            <Badge variant="default" size="md" withDot>
+              Live Telemetry
+            </Badge>
+          </div>
         </div>
 
         {/* 4 Top KPI Cards */}
